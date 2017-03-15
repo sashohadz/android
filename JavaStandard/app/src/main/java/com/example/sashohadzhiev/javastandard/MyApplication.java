@@ -24,7 +24,6 @@ public class MyApplication extends Application {
     @Variable(group="timeBasedTrialSecond") public static String secondVar = "";
     @Variable(name="Show Ads") public static boolean showAds = false;
 
-    static Var<String> itestsec = Var.defineResource("itestSecond", R.drawable.itest);
 
     @Override
     public void onCreate() {
@@ -35,16 +34,18 @@ public class MyApplication extends Application {
         Parser.parseVariablesForClasses(MainActivity.class);
         LeanplumActivityHelper.enableLifecycleCallbacks(this);
 
-        Leanplum.setDeviceId("Sasho-01-03-2017-03");
-        if (BuildConfig.DEBUG) {
-             Leanplum.setAppIdForDevelopmentMode("app_nQGF1lrbStJopxK41pzNwueB7jBbWp4Hl0Qqq1BsYNo", "dev_5yE7VOobZuvUrgoTouFDM7CvZTvD3gDeoze0VNqetTo");
-        } else {
+        Leanplum.setDeviceId("Sasho-15-03-2017-01");
+//        if (BuildConfig.DEBUG) {
+//            System.out.println("DEV MODE");
+//            Leanplum.setAppIdForDevelopmentMode("app_nQGF1lrbStJopxK41pzNwueB7jBbWp4Hl0Qqq1BsYNo", "dev_5yE7VOobZuvUrgoTouFDM7CvZTvD3gDeoze0VNqetTo");
+//        } else {
+            System.out.println("PROD MODE");
             Leanplum.setAppIdForProductionMode("app_nQGF1lrbStJopxK41pzNwueB7jBbWp4Hl0Qqq1BsYNo", "prod_a6cwir5070QOAaVmtkxRAgTD88J40rLWy9lSkvBfJk0");
-        }
+//        }
 
-        LeanplumPushService.setGcmSenderId(LeanplumPushService.LEANPLUM_SENDER_ID);
         Leanplum.enableVerboseLoggingInDevelopmentMode();
 
+        LeanplumPushService.enableFirebase();
         Leanplum.start(this);
 
         Leanplum.addVariablesChangedAndNoDownloadsPendingHandler(new VariablesChangedCallback() {

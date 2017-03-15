@@ -1,7 +1,7 @@
 <resources xmlns:xliff="http://schemas.android.com/tools">
     <!-- Title for the application. [CHAR LIMIT=12] -->
     <string name="app_name">JavaStandard</string>
-    <string name="google_app_id">688445727745</string>
+    <!--<string name="google_app_id">688445727745</string>-->
 
 
     <!-- Hint text display in the empty field for the user's name [CHAR LIMIT=20] -->

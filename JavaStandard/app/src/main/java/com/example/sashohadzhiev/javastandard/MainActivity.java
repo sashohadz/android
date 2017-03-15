@@ -1,5 +1,6 @@
 package com.example.sashohadzhiev.javastandard;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -20,7 +21,10 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends LeanplumActivity {
+public class MainActivity extends Activity {
+
+
+    static Var<String> itestsec = Var.defineResource("itestSecond", R.drawable.itest);
 
     @Variable
     public static int startQuantity = 2;
@@ -88,22 +92,15 @@ public class MainActivity extends LeanplumActivity {
         Editable nameEditable = nameField.getText();
         String name = nameEditable.toString();
 
-        // Figure out if the user wants whipped cream topping
         CheckBox whippedCreamCheckBox = (CheckBox) findViewById(R.id.whipped_cream_checkbox);
         boolean hasWhippedCream = whippedCreamCheckBox.isChecked();
 
-        // Figure out if the user wants whipped cream topping
         CheckBox chocolateCheckBox = (CheckBox) findViewById(R.id.chocolate_checkbox);
         boolean hasChocolate = chocolateCheckBox.isChecked();
 
-        // Calculate the price
         int price = calculatePrice(hasWhippedCream, hasChocolate);
-
-        // Display the order summary on the screen
         String message = createOrderSummary(name, price, hasWhippedCream, hasChocolate);
 
-        // Use an intent to launch an email app.
-        // Send the order summary in the email body.
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:")); // only email apps should handle this
         intent.putExtra(Intent.EXTRA_SUBJECT,
@@ -127,20 +124,16 @@ public class MainActivity extends LeanplumActivity {
      * @return total price
      */
     private int calculatePrice(boolean addWhippedCream, boolean addChocolate) {
-        // First calculate the price of one cup of coffee
         int basePrice = 5;
 
-        // If the user wants whipped cream, add $1 per cup
         if (addWhippedCream) {
             basePrice = basePrice + 1;
         }
 
-        // If the user wants chocolate, add $2 per cup
         if (addChocolate) {
             basePrice = basePrice + 2;
         }
 
-        // Calculate the total order price by multiplying by the quantity
         return quantity * basePrice;
     }
 
@@ -169,34 +162,25 @@ public class MainActivity extends LeanplumActivity {
         return priceMessage;
     }
 
-    /**
-     * This method displays the given quantity value on the screen.
-     */
     private void displayQuantity(int numberOfCoffees) {
         TextView quantityTextView = (TextView) findViewById(
                 R.id.quantity_text_view);
         quantityTextView.setText("" + numberOfCoffees);
     }
 
-    /**
-     * This method displays the info-bottom text on the screen.
-     */
     private void displayLastUpdate() {
         TextView quantityTextView = (TextView) findViewById(
                 R.id.info_text_view);
         quantityTextView.setText(getString(R.string.last_update_text) + " " + lastUpdate);
     }
 
-    /**
-     * This method displays the info-bottom text on the screen.
-     */
     public void displayImage() {
 
-        MyApplication.itestsec.addFileReadyHandler(new VariableCallback<String>() {
+       itestsec.addFileReadyHandler(new VariableCallback<String>() {
             @Override
             public void handle(Var<String> variable) {
                 final ImageView imageView = (ImageView) findViewById(R.id.imageView1);
-                Drawable d = Drawable.createFromStream(MyApplication.itestsec.stream(),"src");
+                Drawable d = Drawable.createFromStream(itestsec.stream(),"src");
                 imageView.setImageDrawable(d);
             }
         });
