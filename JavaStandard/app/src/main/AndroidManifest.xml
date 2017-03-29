@@ -46,6 +46,7 @@
         </service>
 
         <service android:name="com.leanplum.LeanplumLocalPushListenerService" />
+
         <service android:name="com.leanplum.LeanplumPushRegistrationService" />
 
         <activity android:name=".MainActivity">

@@ -34,7 +34,7 @@ public class MyApplication extends Application {
         Parser.parseVariablesForClasses(MainActivity.class);
         LeanplumActivityHelper.enableLifecycleCallbacks(this);
 
-        Leanplum.setDeviceId("Sasho-15-03-2017-01");
+        Leanplum.setDeviceId("Sasho-29-03-2017-02");
 //        if (BuildConfig.DEBUG) {
 //            System.out.println("DEV MODE");
 //            Leanplum.setAppIdForDevelopmentMode("app_nQGF1lrbStJopxK41pzNwueB7jBbWp4Hl0Qqq1BsYNo", "dev_5yE7VOobZuvUrgoTouFDM7CvZTvD3gDeoze0VNqetTo");
