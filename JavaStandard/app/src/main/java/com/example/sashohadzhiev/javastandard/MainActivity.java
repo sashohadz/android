@@ -1,7 +1,9 @@
 package com.example.sashohadzhiev.javastandard;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,7 +26,7 @@ import java.util.Map;
 public class MainActivity extends Activity {
 
 
-    static Var<String> itestsec = Var.defineResource("itestSecond", R.drawable.itest);
+//    static Var<String> itestsec = Var.defineResource("itestSecond", R.drawable.itest);
 
     @Variable
     public static int startQuantity = 2;
@@ -34,7 +36,8 @@ public class MainActivity extends Activity {
     public static String MigrateTestJustJ02 = "Migrate Test Just Java 01";
     @Variable(group = "timeBasedTrial")
     public static String upgradeWallContent = "asd";
-
+    @Variable
+    public static String testingVarThirdMay = "TESTINGVAR01";
     int quantity = startQuantity;
 
     @Override
@@ -57,10 +60,17 @@ public class MainActivity extends Activity {
         Leanplum.track("Increment", IncrementParams);
         Log.e("##Track event", "Increment");
         Log.e("##StrOnIncrementClick", lastUpdate);
-//        Map<String, Object> attributes = new HashMap<>();
-//        attributes.put("SignatureSec", "someSignatureSec");
-//        attributes.put("Signature", "someSignature");
+//        Map<String, Object> attributes = new HashMap<String, Object>();
+//        attributes.put("gender", "Female");
+//        attributes.put("age", 29);
 //        Leanplum.setUserAttributes(attributes);
+
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("highScore", "string1");
+        editor.putString("lowScore", "string2");
+        editor.commit();
+
     }
 
     /**
@@ -72,15 +82,28 @@ public class MainActivity extends Activity {
         }
         quantity = quantity - 1;
         displayQuantity(quantity);
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("Quantity", quantity);
-        Leanplum.track("Decrement", params);
+//        Map<String, Object> params = new HashMap<String, Object>();
+//        params.put("Quantity", quantity);
+//        Leanplum.track("Decrement", params);
         Log.e("##Track event", "Decrement");
-        Log.e("##StrOnDecrementClick", lastUpdate);
+//        Log.e("##StrOnDecrementClick", lastUpdate);
 //        Map<String, Object> attributes = new HashMap<>();
 //        attributes.put("SignatureSec", "");
 //        attributes.put("Signature", "");
 //        Leanplum.setUserAttributes(attributes);
+//        Map<String, Object> attributes = new HashMap<String, Object>();
+//        attributes.put("gender", null);
+//        attributes.put("age", null);
+//        Leanplum.setUserAttributes(attributes);
+
+        SharedPreferences sharedPref = getPreferences(getBaseContext().MODE_PRIVATE);
+        String highScoreStr = sharedPref.getString("highScore", "def");
+        String lowScoreStr = sharedPref.getString("lowScore", "def");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("highScore",highScoreStr);
+        parameters.put("lowScore",lowScoreStr);
+        Log.e("##PARAMETERS", String.valueOf(parameters));
+        Leanplum.track("Decrement", parameters);
     }
 
     /**
@@ -176,14 +199,14 @@ public class MainActivity extends Activity {
 
     public void displayImage() {
 
-       itestsec.addFileReadyHandler(new VariableCallback<String>() {
-            @Override
-            public void handle(Var<String> variable) {
-                final ImageView imageView = (ImageView) findViewById(R.id.imageView1);
-                Drawable d = Drawable.createFromStream(itestsec.stream(),"src");
-                imageView.setImageDrawable(d);
-            }
-        });
+//       itestsec.addFileReadyHandler(new VariableCallback<String>() {
+//            @Override
+//            public void handle(Var<String> variable) {
+//                final ImageView imageView = (ImageView) findViewById(R.id.imageView1);
+//                Drawable d = Drawable.createFromStream(itestsec.stream(),"src");
+//                imageView.setImageDrawable(d);
+//            }
+//        });
     }
 
     /**

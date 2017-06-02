@@ -1,8 +1,26 @@
-// Copyright 2014, Leanplum, Inc.
+/*
+ * Copyright 2014, Leanplum, Inc. All rights reserved.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 package com.leanplum.customtemplates;
 
-import static com.leanplum.customtemplates.MessageTemplates.getApplicationName;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -13,12 +31,15 @@ import com.leanplum.ActionContext;
 import com.leanplum.Leanplum;
 import com.leanplum.LeanplumActivityHelper;
 import com.leanplum.callbacks.ActionCallback;
-import com.leanplum.callbacks.VariablesChangedCallback;
+import com.leanplum.callbacks.PostponableAction;
 import com.leanplum.customtemplates.MessageTemplates.Args;
 import com.leanplum.customtemplates.MessageTemplates.Values;
 
+import static com.leanplum.customtemplates.MessageTemplates.getApplicationName;
+
 /**
  * Registers a Leanplum action that displays a system confirm dialog.
+ *
  * @author Andrew First
  */
 class Confirm {
@@ -37,9 +58,9 @@ class Confirm {
 
           @Override
           public boolean onResponse(final ActionContext context) {
-            LeanplumActivityHelper.queueActionUponActive(new VariablesChangedCallback() {
+            LeanplumActivityHelper.queueActionUponActive(new PostponableAction() {
               @Override
-              public void variablesChanged() {
+              public void run() {
                 Activity activity = LeanplumActivityHelper.getCurrentActivity();
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                     activity);
@@ -50,8 +71,8 @@ class Confirm {
                     .setPositiveButton(context.stringNamed(Args.ACCEPT_TEXT),
                         new DialogInterface.OnClickListener() {
                           public void onClick(DialogInterface dialog, int id) {
-                                context.runTrackedActionNamed(Args.ACCEPT_ACTION);
-                            }
+                            context.runTrackedActionNamed(Args.ACCEPT_ACTION);
+                          }
                         })
                     .setNegativeButton(context.stringNamed(Args.CANCEL_TEXT),
                         new DialogInterface.OnClickListener() {
@@ -60,7 +81,9 @@ class Confirm {
                           }
                         });
                 AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
+                if (activity != null && !activity.isFinishing()) {
+                  alertDialog.show();
+                }
               }
             });
             return true;

@@ -1,17 +1,14 @@
 package com.example.sashohadzhiev.javastandard;
 
 import android.app.Application;
-import android.content.res.Resources;
 import android.util.Log;
+
 import com.leanplum.Leanplum;
 import com.leanplum.LeanplumActivityHelper;
 import com.leanplum.LeanplumPushService;
-import com.leanplum.LeanplumResources;
 import com.leanplum.Var;
 import com.leanplum.annotations.Parser;
 import com.leanplum.annotations.Variable;
-
-
 import com.leanplum.callbacks.VariablesChangedCallback;
 
 
@@ -21,20 +18,30 @@ import com.leanplum.callbacks.VariablesChangedCallback;
 public class MyApplication extends Application {
 
     private static Var<String> welcomeLabel = Var.define("welcomeLabel", "");
-    @Variable(group="timeBasedTrialSecond") public static String secondVar = "";
-    @Variable(name="Show Ads") public static boolean showAds = false;
+    @Variable(group = "timeBasedTrialSecond")
+    public static String secondVar = "";
+    @Variable
+    public static float shootSpeed = 1;  // How fast your ship shoots.
+
+    @Variable
+    public static String testingVarFourMay = "TESTINGVAR01";
+    @Variable
+    public static String testingVarFiveMay = "TESTINGVAR01";
+    @Variable(name = "Show Ads")
+    public static boolean showAds = false;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+
         Leanplum.setApplicationContext(this);
         Parser.parseVariables(this);
         Parser.parseVariablesForClasses(MainActivity.class);
         LeanplumActivityHelper.enableLifecycleCallbacks(this);
 
-        Leanplum.setDeviceId("Sasho-29-03-2017-02");
+        Leanplum.setDeviceId("Sasho-02-06-2017-02");
 //        if (BuildConfig.DEBUG) {
 //            System.out.println("DEV MODE");
 //            Leanplum.setAppIdForDevelopmentMode("app_nQGF1lrbStJopxK41pzNwueB7jBbWp4Hl0Qqq1BsYNo", "dev_5yE7VOobZuvUrgoTouFDM7CvZTvD3gDeoze0VNqetTo");
@@ -44,15 +51,15 @@ public class MyApplication extends Application {
 //        }
 
         Leanplum.enableVerboseLoggingInDevelopmentMode();
+        com.leanplum.customtemplates.MessageTemplates.register(getApplicationContext());
 
-        LeanplumPushService.enableFirebase();
+//        LeanplumPushService.enableFirebase();
         Leanplum.start(this);
 
         Leanplum.addVariablesChangedAndNoDownloadsPendingHandler(new VariablesChangedCallback() {
             @Override
             public void variablesChanged() {
-                Boolean tempBool = showAds;
-                System.out.println("   showAds VALUE call: " + tempBool);
+
                 String tempValue = welcomeLabel.value();
                 int tempLength = tempValue.length();
 
@@ -61,10 +68,5 @@ public class MyApplication extends Application {
                 System.out.println("   welcomeLabel VALUE: " + tempValue + " " + tempLength);
             }
         });
-    }
-
-    @Override
-    public Resources getResources() {
-        return new LeanplumResources(super.getResources());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014, Leanplum, Inc. All rights reserved.
+ * Copyright 2017, Leanplum, Inc. All rights reserved.
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -22,7 +22,9 @@
 package com.leanplum.customtemplates;
 
 import android.app.Activity;
-import android.content.Context;
+import android.support.annotation.NonNull;
+import android.util.Log;
+import android.view.MotionEvent;
 
 import com.leanplum.ActionContext;
 import com.leanplum.Leanplum;
@@ -32,22 +34,35 @@ import com.leanplum.callbacks.PostponableAction;
 import com.leanplum.callbacks.VariablesChangedCallback;
 
 /**
- * Registers a Leanplum action that displays a fullscreen interstitial.
+ * Registers a Leanplum action that displays a HTML message.
  *
- * @author Andrew First
+ * @author Anna Orlova
  */
-public class Interstitial extends BaseMessageDialog {
-  private static final String NAME = "Interstitial";
+@SuppressWarnings("WeakerAccess")
+public class HTMLTemplate extends BaseMessageDialog {
+  private static final String NAME = "HTML";
 
-  public Interstitial(Activity activity, InterstitialOptions options) {
-    super(activity, true, options, null, null);
-    this.options = options;
+  public HTMLTemplate(Activity activity, HTMLOptions htmlOptions) {
+    super(activity, htmlOptions.isFullScreen(), null, null, htmlOptions);
+    this.htmlOptions = htmlOptions;
   }
 
-  public static void register(Context currentContext) {
+  @Override
+  public boolean dispatchTouchEvent(@NonNull MotionEvent ev) {
+    if (!htmlOptions.isFullScreen()) {
+      if (htmlOptions.getHtmlAlign().equals(MessageTemplates.Args.HTML_ALIGN_TOP) && ev.getY()
+          > htmlOptions.getHtmlHeight() ||
+          htmlOptions.getHtmlAlign().equals(MessageTemplates.Args.HTML_ALIGN_BOTTOM) && ev.getY()
+              < dialogView.getHeight() - htmlOptions.getHtmlHeight()) {
+        activity.dispatchTouchEvent(ev);
+      }
+    }
+    return super.dispatchTouchEvent(ev);
+  }
+
+  public static void register() {
     Leanplum.defineAction(NAME, Leanplum.ACTION_KIND_MESSAGE | Leanplum.ACTION_KIND_ACTION,
-        InterstitialOptions.toArgs(currentContext),
-        new ActionCallback() {
+        HTMLOptions.toArgs(), new ActionCallback() {
           @Override
           public boolean onResponse(final ActionContext context) {
             Leanplum.addOnceVariablesChangedAndNoDownloadsPendingHandler(
@@ -58,14 +73,17 @@ public class Interstitial extends BaseMessageDialog {
                         new PostponableAction() {
                           @Override
                           public void run() {
-                            Activity activity = LeanplumActivityHelper.getCurrentActivity();
-                            if (activity == null) {
-                              return;
-                            }
-                            Interstitial interstitial = new Interstitial(activity,
-                                new InterstitialOptions(context));
-                            if (!activity.isFinishing()) {
-                              interstitial.show();
+                            try {
+                              HTMLOptions htmlOptions = new HTMLOptions(context);
+                              if (htmlOptions.getHtmlTemplate() == null) {
+                                return;
+                              }
+                              final Activity activity = LeanplumActivityHelper.getCurrentActivity();
+                              if (activity != null && !activity.isFinishing()) {
+                                new HTMLTemplate(activity, htmlOptions);
+                              }
+                            } catch (Throwable t) {
+                              Log.e("Leanplum", "Fail on show HTML In-App message.", t);
                             }
                           }
                         });

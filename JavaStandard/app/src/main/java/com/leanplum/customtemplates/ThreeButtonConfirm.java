@@ -1,8 +1,5 @@
-// Copyright 2016, Leanplum, Inc.
-
 package com.leanplum.customtemplates;
 
-import static com.leanplum.customtemplates.MessageTemplates.getApplicationName;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -13,63 +10,64 @@ import com.leanplum.ActionContext;
 import com.leanplum.Leanplum;
 import com.leanplum.LeanplumActivityHelper;
 import com.leanplum.callbacks.ActionCallback;
-import com.leanplum.callbacks.VariablesChangedCallback;
-import com.leanplum.customtemplates.MessageTemplates.Args;
-import com.leanplum.customtemplates.MessageTemplates.Values;
+import com.leanplum.callbacks.PostponableAction;
+
+import static com.leanplum.customtemplates.MessageTemplates.getApplicationName;
 
 /**
- * Registers a Leanplum action that displays a system confirm dialog with 3 buttons.
- * It will track an event when the Accept, Cancel, or Tentative buttons are clicked.
- * @author Sasho Hadzhiev
+ * Created by sashohadzhiev on 6/2/17.
  */
-class ThreeButtonConfirm {
-    private static final String NAME = "3Button Confirm";
+
+public class ThreeButtonConfirm {
+    private static final String NAME = "ThreeButtonConfirm";
 
     public static void register(Context currentContext) {
         Leanplum.defineAction(
                 NAME,
                 Leanplum.ACTION_KIND_MESSAGE | Leanplum.ACTION_KIND_ACTION,
-                new ActionArgs().with(Args.TITLE, getApplicationName(currentContext))
-                        .with(Args.MESSAGE, Values.CONFIRM_MESSAGE)
-                        .with(Args.ACCEPT_TEXT, Values.YES_TEXT)
-                        .with(Args.CANCEL_TEXT, Values.NO_TEXT)
-                        .with(Args.TENTATIVE_TEXT, Values.HELP_TEXT)
-                        .withAction(Args.ACCEPT_ACTION, null)
-                        .withAction(Args.CANCEL_ACTION, null)
-                        .withAction(Args.TENTATIVE_ACTION, null), new ActionCallback() {
+                new ActionArgs().with(MessageTemplates.Args.TITLE, getApplicationName(currentContext))
+                        .with(MessageTemplates.Args.MESSAGE, MessageTemplates.Values.CONFIRM_MESSAGE)
+                        .with(MessageTemplates.Args.ACCEPT_TEXT, MessageTemplates.Values.YES_TEXT)
+                        .with(MessageTemplates.Args.CANCEL_TEXT, MessageTemplates.Values.NO_TEXT)
+                        .with(MessageTemplates.Args.MAYBE_TEXT, MessageTemplates.Values.MAYBE_TEXT)
+                        .withAction(MessageTemplates.Args.ACCEPT_ACTION, null)
+                        .withAction(MessageTemplates.Args.CANCEL_ACTION, null)
+                        .withAction(MessageTemplates.Args.MAYBE_ACTION, null), new ActionCallback() {
 
                     @Override
                     public boolean onResponse(final ActionContext context) {
-                        LeanplumActivityHelper.queueActionUponActive(new VariablesChangedCallback() {
+                        LeanplumActivityHelper.queueActionUponActive(new PostponableAction() {
                             @Override
-                            public void variablesChanged() {
+                            public void run() {
                                 Activity activity = LeanplumActivityHelper.getCurrentActivity();
                                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                                         activity);
                                 alertDialogBuilder
-                                        .setTitle(context.stringNamed(Args.TITLE))
-                                        .setMessage(context.stringNamed(Args.MESSAGE))
+                                        .setTitle(context.stringNamed(MessageTemplates.Args.TITLE))
+                                        .setMessage(context.stringNamed(MessageTemplates.Args.MESSAGE))
                                         .setCancelable(false)
-                                        .setPositiveButton(context.stringNamed(Args.ACCEPT_TEXT),
+                                        .setPositiveButton(context.stringNamed(MessageTemplates.Args.ACCEPT_TEXT), // ACCEPT_TEXT == "Accept text"
                                                 new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int id) {
-                                                        context.runTrackedActionNamed(Args.ACCEPT_ACTION);
+                                                        context.runTrackedActionNamed(MessageTemplates.Args.ACCEPT_ACTION); // ACCEPT_ACTION == "Accept action"
                                                     }
                                                 })
-                                        .setNegativeButton(context.stringNamed(Args.CANCEL_TEXT),
+                                        .setNegativeButton(context.stringNamed(MessageTemplates.Args.CANCEL_TEXT),
                                                 new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int id) {
-                                                        context.runTrackedActionNamed(Args.CANCEL_ACTION);
+                                                        context.runActionNamed(MessageTemplates.Args.CANCEL_ACTION);
                                                     }
                                                 })
-                                        .setNeutralButton(context.stringNamed(Args.TENTATIVE_TEXT),
+                                        .setNeutralButton(context.stringNamed(MessageTemplates.Args.MAYBE_TEXT),
                                                 new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int id) {
-                                                        context.runTrackedActionNamed(Args.TENTATIVE_ACTION);
+                                                        context.runActionNamed(MessageTemplates.Args.MAYBE_ACTION);
                                                     }
                                                 });
                                 AlertDialog alertDialog = alertDialogBuilder.create();
-                                alertDialog.show();
+                                if (activity != null && !activity.isFinishing()) {
+                                    alertDialog.show();
+                                }
                             }
                         });
                         return true;
