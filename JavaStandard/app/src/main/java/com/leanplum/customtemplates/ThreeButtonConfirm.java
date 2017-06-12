@@ -12,6 +12,8 @@ import com.leanplum.LeanplumActivityHelper;
 import com.leanplum.callbacks.ActionCallback;
 import com.leanplum.callbacks.PostponableAction;
 
+import java.util.Map;
+
 import static com.leanplum.customtemplates.MessageTemplates.getApplicationName;
 
 /**
@@ -21,7 +23,7 @@ import static com.leanplum.customtemplates.MessageTemplates.getApplicationName;
 public class ThreeButtonConfirm {
     private static final String NAME = "ThreeButtonConfirm";
 
-    public static void register(Context currentContext) {
+    public static void register(final Context currentContext) {
         Leanplum.defineAction(
                 NAME,
                 Leanplum.ACTION_KIND_MESSAGE | Leanplum.ACTION_KIND_ACTION,
@@ -30,7 +32,7 @@ public class ThreeButtonConfirm {
                         .with(MessageTemplates.Args.ACCEPT_TEXT, MessageTemplates.Values.YES_TEXT)
                         .with(MessageTemplates.Args.CANCEL_TEXT, MessageTemplates.Values.NO_TEXT)
                         .with(MessageTemplates.Args.MAYBE_TEXT, MessageTemplates.Values.MAYBE_TEXT)
-                        .withAction(MessageTemplates.Args.ACCEPT_ACTION, null)
+                        .withAction("TestingDummy", null)
                         .withAction(MessageTemplates.Args.CANCEL_ACTION, null)
                         .withAction(MessageTemplates.Args.MAYBE_ACTION, null), new ActionCallback() {
 
@@ -39,7 +41,7 @@ public class ThreeButtonConfirm {
                         LeanplumActivityHelper.queueActionUponActive(new PostponableAction() {
                             @Override
                             public void run() {
-                                Activity activity = LeanplumActivityHelper.getCurrentActivity();
+                                final Activity activity = LeanplumActivityHelper.getCurrentActivity();
                                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                                         activity);
                                 alertDialogBuilder
@@ -49,7 +51,12 @@ public class ThreeButtonConfirm {
                                         .setPositiveButton(context.stringNamed(MessageTemplates.Args.ACCEPT_TEXT), // ACCEPT_TEXT == "Accept text"
                                                 new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int id) {
-                                                        context.runTrackedActionNamed(MessageTemplates.Args.ACCEPT_ACTION); // ACCEPT_ACTION == "Accept action"
+                                                        context.objectNamed(context.getMessageId());
+                                                        // We can mimic the LP behavior for runTrackedActionNamed for
+                                                        // a period of time - until an app update.
+                                                        // The same old action name, but we now track the correct eventName.
+                                                        context.trackMessageEvent("Accept action", 0.0, null, null);
+                                                        context.runActionNamed("TestingDummy");
                                                     }
                                                 })
                                         .setNegativeButton(context.stringNamed(MessageTemplates.Args.CANCEL_TEXT),

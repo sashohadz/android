@@ -41,19 +41,25 @@ public class MyApplication extends Application {
         Parser.parseVariablesForClasses(MainActivity.class);
         LeanplumActivityHelper.enableLifecycleCallbacks(this);
 
-        Leanplum.setDeviceId("Sasho-02-06-2017-02");
-//        if (BuildConfig.DEBUG) {
-//            System.out.println("DEV MODE");
-//            Leanplum.setAppIdForDevelopmentMode("app_nQGF1lrbStJopxK41pzNwueB7jBbWp4Hl0Qqq1BsYNo", "dev_5yE7VOobZuvUrgoTouFDM7CvZTvD3gDeoze0VNqetTo");
-//        } else {
+        Leanplum.setDeviceId("Sasho-12-06-2017-08");
+
+        String appId = "app_IMuJTrB4NWUWPy6CPacc2ISPYf8fzSojC3W8WYBjXDs";
+        String devKey = "dev_ENDhrsl8pWrY1hMraGHyj07pshRgX0vlpFAhMoOXd9w";
+        String prodKey = "prod_dg4srbBdKqgdIqoM8d4pV2TIX3om1sMXVrAZBfQabcE";
+
+        if (BuildConfig.DEBUG) {
+            System.out.println("DEV MODE");
+            Leanplum.setAppIdForDevelopmentMode(appId, devKey);
+        } else {
             System.out.println("PROD MODE");
-            Leanplum.setAppIdForProductionMode("app_nQGF1lrbStJopxK41pzNwueB7jBbWp4Hl0Qqq1BsYNo", "prod_a6cwir5070QOAaVmtkxRAgTD88J40rLWy9lSkvBfJk0");
-//        }
+            Leanplum.setAppIdForProductionMode(appId, prodKey);
+        }
 
         Leanplum.enableVerboseLoggingInDevelopmentMode();
+
         com.leanplum.customtemplates.MessageTemplates.register(getApplicationContext());
 
-//        LeanplumPushService.enableFirebase();
+        LeanplumPushService.enableFirebase();
         Leanplum.start(this);
 
         Leanplum.addVariablesChangedAndNoDownloadsPendingHandler(new VariablesChangedCallback() {
