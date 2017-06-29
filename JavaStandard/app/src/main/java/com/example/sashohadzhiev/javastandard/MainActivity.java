@@ -60,10 +60,10 @@ public class MainActivity extends Activity {
         Leanplum.track("Increment", IncrementParams);
         Log.e("##Track event", "Increment");
         Log.e("##StrOnIncrementClick", lastUpdate);
-//        Map<String, Object> attributes = new HashMap<String, Object>();
-//        attributes.put("gender", "Female");
-//        attributes.put("age", 29);
-//        Leanplum.setUserAttributes(attributes);
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        attributes.put("gender", "Female");
+        attributes.put("age", 29);
+        Leanplum.setUserAttributes(attributes);
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -91,10 +91,11 @@ public class MainActivity extends Activity {
 //        attributes.put("SignatureSec", "");
 //        attributes.put("Signature", "");
 //        Leanplum.setUserAttributes(attributes);
-//        Map<String, Object> attributes = new HashMap<String, Object>();
-//        attributes.put("gender", null);
-//        attributes.put("age", null);
-//        Leanplum.setUserAttributes(attributes);
+
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        attributes.put("gender", null);
+        attributes.put("age", null);
+        Leanplum.setUserAttributes(attributes);
 
         SharedPreferences sharedPref = getPreferences(getBaseContext().MODE_PRIVATE);
         String highScoreStr = sharedPref.getString("highScore", "def");
